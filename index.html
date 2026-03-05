@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #FEFEFE;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <script>
+      let images = [];
+      let cols = 6;
+      let rows = 6;
+
+      function preload() {
+        images[0] = loadImage("assets/h01.png");
+        images[1] = loadImage("assets/h02.png");
+        images[2] = loadImage("assets/h03.png");
+        images[3] = loadImage("assets/h04.png");
+        images[4] = loadImage("assets/h05.png");
+        images[5] = loadImage("assets/b01.png");
+        images[6] = loadImage("assets/b02.png");
+        images[7] = loadImage("assets/b03.png");
+        images[8] = loadImage("assets/b04.png");
+        images[9] = loadImage("assets/b05.png");
+      }
+
+      function setup() {
+        createCanvas(600, 600);
+        background(222, 26, 26);
+        let cellW = width / cols;
+        let cellH = height / rows;
+        let totalCells = rows * cols;
+        let emptyIndices = [];
+        while (emptyIndices.length < 5) {
+          let candidate = floor(random(totalCells));
+          if (!emptyIndices.includes(candidate)) {
+            emptyIndices.push(candidate);
+          }
+        }
+        let palette = [
+          color(240, 200, 180),
+          color(215, 180, 158),
+          color(236, 200, 174),
+          color(237, 230, 227),
+          color(255, 237, 225),
+          color(245, 227, 224),
+        ];
+        let i = 0;
+        noStroke();
+        for (let y = 0; y < rows; y++) {
+          for (let x = 0; x < cols; x++) {
+            if (emptyIndices.includes(i++)) continue;
+            fill(random(palette));
+            rect(x * cellW, y * cellH, cellW, cellH);
+          }
+        }
+        blendMode(MULTIPLY);
+        let j = 0;
+        imageMode(CENTER);
+        for (let y = 0; y < rows; y++) {
+          for (let x = 0; x < cols; x++) {
+            if (emptyIndices.includes(j++)) continue;
+            let posX = x * cellW + cellW / 2;
+            let posY = y * cellH + cellH / 2;
+            if (x === 0 || x === 5 || y === 0 || y === 5) continue;
+            push();
+            translate(posX, posY);
+            rotate(radians(random(-10, 20)));
+            let scaleFactor = random(0.6, 1.5);
+            if (scaleFactor > 0.8 && scaleFactor < 0.9) { scaleFactor *= 5; }
+            scale(scaleFactor);
+            image(random(images), 0, 0, cellW, cellH);
+            pop();
+          }
+        }
+      }
+
+      function keyPressed() {
+        if (key === 'd' || key === 'D') {
+          saveCanvas('artwork', 'png');
+        }
+        if (key === ' ') {
+          setup();
+        }
+      }
+    </script>
+  </body>
+</html>
